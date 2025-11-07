@@ -1,0 +1,96 @@
+CREATE TABLE IF NOT EXISTS "user" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    login VARCHAR(36) NOT NULL UNIQUE,
+    password_hash VARCHAR(60) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "transaction_type" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "category" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    transaction_type_id BIGINT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    limit_amount DECIMAL(15,2) NOT NULL,
+    alert_threshold INTEGER,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, name),
+    FOREIGN KEY (user_id) REFERENCES "user"(id),
+    FOREIGN KEY (transaction_type_id) REFERENCES "transaction_type"(id)
+);
+
+CREATE TABLE IF NOT EXISTS "category_balance" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
+    remaining_balance DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE(user_id, category_id),
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES "category"(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "category_balance_history" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
+    remaining_balance DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "operation" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    transaction_type_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (transaction_type_id) REFERENCES "transaction_type"(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES "category"(id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "account_balance" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE,
+    balance DECIMAL(15,2) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "account_balance_history" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    balance DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "direction_type" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "balance_movement" (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    operation_id BIGINT NOT NULL,
+    account_balance_id BIGINT NOT NULL,
+    category_balance_id BIGINT,
+    direction_type_id BIGINT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL CHECK (amount >= 0),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (operation_id) REFERENCES operation(id) ON DELETE CASCADE,
+    FOREIGN KEY (account_balance_id) REFERENCES account_balance(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_balance_id) REFERENCES category_balance(id) ON DELETE CASCADE,
+    FOREIGN KEY (direction_type_id) REFERENCES direction_type(id) ON DELETE CASCADE
+);
