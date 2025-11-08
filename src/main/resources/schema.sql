@@ -49,12 +49,10 @@ CREATE TABLE IF NOT EXISTS "category_balance_history" (
 CREATE TABLE IF NOT EXISTS "operation" (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    transaction_type_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
     amount DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (transaction_type_id) REFERENCES "transaction_type"(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (category_id) REFERENCES "category"(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
