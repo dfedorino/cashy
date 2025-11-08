@@ -4,7 +4,6 @@ import com.dfedorino.cashy.domain.model.account.AccountBalanceHistoryEntity;
 import com.dfedorino.cashy.domain.repository.account.AccountBalanceHistoryRepository;
 import com.dfedorino.cashy.domain.repository.exception.RepositoryException;
 import com.dfedorino.cashy.jdbc.util.KeyHolderUtil;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,21 +18,17 @@ public class JdbcAccountBalanceHistoryRepository implements AccountBalanceHistor
 
     public static final String USER_ID = "userId";
     public static final String BALANCE = "balance";
-    public static final String CREATED_AT = "createdAt";
     private static final String INSERT_HISTORY =
             "INSERT INTO account_balance_history(user_id, balance) "
                     + "VALUES (:" + USER_ID + ", :" + BALANCE + ")";
     private static final String SELECT_BY_USER = "SELECT * FROM account_balance_history "
             + "WHERE user_id = :" + USER_ID
             + " ORDER BY created_at ASC";
-    private static final String SELECT_BY_USER_AND_PERIOD = "SELECT * FROM account_balance_history "
-            + "WHERE user_id = :" + USER_ID
-            + " AND created_at BETWEEN :" + CREATED_AT + "_from AND :" + CREATED_AT + "_to"
-            + " ORDER BY created_at ASC";
+
     private final JdbcClient jdbcClient;
 
     @Override
-    public AccountBalanceHistoryEntity create(AccountBalanceHistoryEntity history) {
+    public AccountBalanceHistoryEntity createHistoryEntry(AccountBalanceHistoryEntity history) {
         var keyHolder = new GeneratedKeyHolder();
 
         try {
@@ -62,25 +57,6 @@ public class JdbcAccountBalanceHistoryRepository implements AccountBalanceHistor
                     .list();
         } catch (Exception e) {
             log.error(">> Failed to fetch account balance history for userId: {}", userId);
-            log.error(">> ", e);
-            throw new RepositoryException(e);
-        }
-    }
-
-    @Override
-    public List<AccountBalanceHistoryEntity> findByUserIdAndPeriod(Long userId,
-                                                                   LocalDateTime from,
-                                                                   LocalDateTime to) {
-        try {
-            return jdbcClient.sql(SELECT_BY_USER_AND_PERIOD)
-                    .param(USER_ID, userId)
-                    .param(CREATED_AT + "_from", from)
-                    .param(CREATED_AT + "_to", to)
-                    .query(AccountBalanceHistoryEntity.class)
-                    .list();
-        } catch (Exception e) {
-            log.error(">> Failed to fetch account balance history for userId: {} from: {} to: {}",
-                      userId, from, to);
             log.error(">> ", e);
             throw new RepositoryException(e);
         }
