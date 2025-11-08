@@ -91,12 +91,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
                 return Optional.empty();
             }
 
-            return jdbcClient.sql(
-                            "SELECT * FROM category WHERE user_id = :" + USER_ID + " AND name = :" + NAME)
-                    .param(USER_ID, userId)
-                    .param(NAME, newName)
-                    .query(CategoryEntity.class)
-                    .optional();
+            return findByUserIdAndName(userId, newName);
 
         } catch (Exception e) {
             log.error(">> Failed to update category name for userId: {}, oldName: {}, newName: {}",
@@ -121,11 +116,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
                 return Optional.empty();
             }
 
-            return jdbcClient.sql(SELECT_BY_USER_ID + " AND name = :" + NAME)
-                    .param(USER_ID, userId)
-                    .param(NAME, name)
-                    .query(CategoryEntity.class)
-                    .optional();
+            return findByUserIdAndName(userId, name);
 
         } catch (Exception e) {
             log.error(
@@ -150,11 +141,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
                 return Optional.empty();
             }
 
-            return jdbcClient.sql(SELECT_BY_USER_ID + " AND name = :" + NAME)
-                    .param(USER_ID, userId)
-                    .param(NAME, name)
-                    .query(CategoryEntity.class)
-                    .optional();
+            return findByUserIdAndName(userId, name);
 
         } catch (Exception e) {
             log.error(
@@ -174,6 +161,22 @@ public class JdbcCategoryRepository implements CategoryRepository {
                     .list();
         } catch (Exception e) {
             log.error(">> Failed to fetch categories for userId: {}", userId);
+            log.error(">> ", e);
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public Optional<CategoryEntity> findByUserIdAndName(Long userId, String categoryName) {
+        try {
+            return jdbcClient.sql(SELECT_BY_USER_ID + " AND name = :" + NAME)
+                    .param(USER_ID, userId)
+                    .param(NAME, categoryName)
+                    .query(CategoryEntity.class)
+                    .optional();
+        } catch (Exception e) {
+            log.error(">> Failed to fetch category for userId: {}, category name: {}",
+                      userId, categoryName);
             log.error(">> ", e);
             throw new RepositoryException(e);
         }

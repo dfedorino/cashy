@@ -70,5 +70,15 @@ public interface CategoryRepository {
      * @throws RepositoryException if any error occurs
      */
     List<CategoryEntity> findByUserId(Long userId);
+
+    /**
+     * Retrieves a category belonging to a specific user with the given name.
+     *
+     * @param userId the user ID
+     * @param categoryName the category name
+     * @return an {@link Optional} containing the {@link CategoryEntity} if found
+     * @throws RepositoryException if any error occurs
+     */
+    Optional<CategoryEntity> findByUserIdAndName(Long userId, String categoryName);
 }
 
