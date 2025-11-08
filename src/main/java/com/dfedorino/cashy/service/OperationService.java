@@ -69,34 +69,6 @@ public class OperationService {
         });
     }
 
-    public OperationDto createExpenseOperation(BigDecimal amount) {
-        if (!AuthorisationUtil.isUserLoggedIn()) {
-            throw new UserNotLoggedInException();
-        }
-
-        String userLogin = AuthorisationUtil.getCurrentUser().login();
-
-        return safeTx($ -> {
-            Long userId = getUserId(userLogin);
-
-            var operation = operationRepository.createOperation(
-                    new OperationEntity(userId, null, amount));
-
-            var updatedAccountBalance = updateAccountBalance(userId,
-                                                             operation.getAmount(),
-                                                             BigDecimal::subtract);
-
-            return new OperationDto(
-                    userLogin,
-                    null,
-                    operation.getAmount(),
-                    null,
-                    null,
-                    updatedAccountBalance.getBalance()
-            );
-        });
-    }
-
     public OperationDto createExpenseOperation(BigDecimal amount, String categoryName) {
         if (!AuthorisationUtil.isUserLoggedIn()) {
             throw new UserNotLoggedInException();
@@ -184,18 +156,20 @@ public class OperationService {
         BigDecimal newCategoryBalance = categoryBalance.getCurrentBalance()
                 .add(operationAmount);
 
-        BigDecimal newRemainingBalance = categoryBalance.getRemainingBalance()
-                .subtract(operationAmount);
+        if (categoryBalance.getRemainingBalance() != null) {
+            BigDecimal newRemainingBalance = categoryBalance.getRemainingBalance()
+                    .subtract(operationAmount);
 
-        categoryBalanceRepository.updateCurrentBalanceByUserIdAndCategoryId(
-                userId,
-                categoryId,
-                newCategoryBalance);
+            categoryBalanceRepository
+                    .updateRemainingBalanceByUserIdAndCategoryId(userId,
+                                                                 categoryId,
+                                                                 newRemainingBalance);
+        }
 
-        return categoryBalanceRepository
-                .updateRemainingBalanceByUserIdAndCategoryId(userId,
-                                                             categoryId,
-                                                             newRemainingBalance)
+        return categoryBalanceRepository.updateCurrentBalanceByUserIdAndCategoryId(
+                        userId,
+                        categoryId,
+                        newCategoryBalance)
                 .orElseThrow();
     }
 
