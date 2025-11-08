@@ -20,6 +20,10 @@ public class AuthorisationUtil {
         return CURRENT_USER.get();
     }
 
+    public static boolean isUserLoggedIn() {
+        return getCurrentUser() != null;
+    }
+
     public static String getEncodedPassword(String password) {
         return PASSWORD_ENCODER.encode(password);
     }

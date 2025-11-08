@@ -81,11 +81,7 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                 return Optional.empty();
             }
 
-            return jdbcClient.sql(SELECT_BY_USER_AND_CATEGORY)
-                    .param(USER_ID, userId)
-                    .param(CATEGORY_ID, categoryId)
-                    .query(CategoryBalanceEntity.class)
-                    .optional();
+            return findByUserIdAndCategoryId(userId, categoryId);
 
         } catch (Exception e) {
             log.error(
@@ -111,11 +107,7 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                 return Optional.empty();
             }
 
-            return jdbcClient.sql(SELECT_BY_USER_AND_CATEGORY)
-                    .param(USER_ID, userId)
-                    .param(CATEGORY_ID, categoryId)
-                    .query(CategoryBalanceEntity.class)
-                    .optional();
+            return findByUserIdAndCategoryId(userId, categoryId);
 
         } catch (Exception e) {
             log.error(
@@ -135,6 +127,22 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                     .list();
         } catch (Exception e) {
             log.error(">> Failed to fetch category balances for userId: {}", userId);
+            log.error(">> ", e);
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public Optional<CategoryBalanceEntity> findByUserIdAndCategoryId(Long userId, Long categoryId) {
+        try {
+            return jdbcClient.sql(SELECT_BY_USER_AND_CATEGORY)
+                    .param(USER_ID, userId)
+                    .param(CATEGORY_ID, categoryId)
+                    .query(CategoryBalanceEntity.class)
+                    .optional();
+        } catch (Exception e) {
+            log.error(">> Failed to fetch category balance for userId: {}, categoryId: {}",
+                      userId, categoryId);
             log.error(">> ", e);
             throw new RepositoryException(e);
         }
