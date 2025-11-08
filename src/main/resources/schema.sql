@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "category" (
     user_id BIGINT NOT NULL,
     transaction_type_id BIGINT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    limit_amount DECIMAL(15,2) NOT NULL,
+    limit_amount DECIMAL(15,2),
     alert_threshold INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (user_id, name),
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS "operation" (
 CREATE TABLE IF NOT EXISTS "account_balance" (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL UNIQUE,
-    balance DECIMAL(15,2) NOT NULL DEFAULT 0,
+    balance DECIMAL(15,2) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
@@ -81,12 +81,14 @@ CREATE TABLE IF NOT EXISTS "direction_type" (
 
 CREATE TABLE IF NOT EXISTS "balance_movement" (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
     operation_id BIGINT NOT NULL,
     account_balance_id BIGINT NOT NULL,
     category_balance_id BIGINT,
     direction_type_id BIGINT NOT NULL,
     amount DECIMAL(15,2) NOT NULL CHECK (amount >= 0),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
     FOREIGN KEY (operation_id) REFERENCES operation(id) ON DELETE CASCADE,
     FOREIGN KEY (account_balance_id) REFERENCES account_balance(id) ON DELETE CASCADE,
     FOREIGN KEY (category_balance_id) REFERENCES category_balance(id) ON DELETE CASCADE,

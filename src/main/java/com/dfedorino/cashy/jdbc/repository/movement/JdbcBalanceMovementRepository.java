@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class JdbcBalanceMovementRepository implements BalanceMovementRepository {
 
+    public static final String USER_ID = "userId";
     public static final String OPERATION_ID = "operationId";
     public static final String ACCOUNT_BALANCE_ID = "accountBalanceId";
     public static final String CATEGORY_BALANCE_ID = "categoryBalanceId";
@@ -22,13 +23,15 @@ public class JdbcBalanceMovementRepository implements BalanceMovementRepository 
     public static final String AMOUNT = "amount";
 
     public static final String INSERT_MOVEMENT =
-            "INSERT INTO balance_movement(" +
-                    "operation_id, "
+            "INSERT INTO balance_movement("
+                    + "user_id, "
+                    + "operation_id, "
                     + "account_balance_id, "
                     + "category_balance_id, "
                     + "direction_type_id, "
                     + "amount) "
                     + "VALUES ("
+                    + ":" + USER_ID + ", "
                     + ":" + OPERATION_ID + ", "
                     + ":" + ACCOUNT_BALANCE_ID + ", "
                     + ":" + CATEGORY_BALANCE_ID + ", "
@@ -43,6 +46,7 @@ public class JdbcBalanceMovementRepository implements BalanceMovementRepository 
 
         try {
             jdbcClient.sql(INSERT_MOVEMENT)
+                    .param(USER_ID, movement.getUserId())
                     .param(OPERATION_ID, movement.getOperationId())
                     .param(ACCOUNT_BALANCE_ID, movement.getAccountBalanceId())
                     .param(CATEGORY_BALANCE_ID, movement.getCategoryBalanceId())
