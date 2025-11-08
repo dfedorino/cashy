@@ -4,6 +4,7 @@ import com.dfedorino.cashy.domain.model.category.CategoryEntity;
 import com.dfedorino.cashy.domain.repository.category.CategoryRepository;
 import com.dfedorino.cashy.domain.repository.exception.RepositoryException;
 import com.dfedorino.cashy.jdbc.util.KeyHolderUtil;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -106,8 +107,9 @@ public class JdbcCategoryRepository implements CategoryRepository {
     }
 
     @Override
-    public Optional<CategoryEntity> updateLimitAmountByUserIdAndName(Long userId, String name,
-                                                                     String newLimitAmount) {
+    public Optional<CategoryEntity> updateLimitAmountByUserIdAndName(Long userId,
+                                                                     String name,
+                                                                     BigDecimal newLimitAmount) {
         try {
             int updated = jdbcClient.sql(UPDATE_LIMIT_AMOUNT)
                     .param(USER_ID, userId)
@@ -136,7 +138,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
 
     @Override
     public Optional<CategoryEntity> updateAlertThresholdByUserIdAndName(Long userId, String name,
-                                                                        String newAlertThreshold) {
+                                                                        Integer newAlertThreshold) {
         try {
             int updated = jdbcClient.sql(UPDATE_ALERT_THRESHOLD)
                     .param(USER_ID, userId)

@@ -2,6 +2,7 @@ package com.dfedorino.cashy.domain.repository.category;
 
 import com.dfedorino.cashy.domain.model.category.CategoryEntity;
 import com.dfedorino.cashy.domain.repository.exception.RepositoryException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public interface CategoryRepository {
      */
     Optional<CategoryEntity> updateLimitAmountByUserIdAndName(Long userId,
                                                               String name,
-                                                              String newLimitAmount);
+                                                              BigDecimal newLimitAmount);
 
     /**
      * Updates the alert threshold of an existing category for a specific user.
@@ -58,7 +59,7 @@ public interface CategoryRepository {
      */
     Optional<CategoryEntity> updateAlertThresholdByUserIdAndName(Long userId,
                                                                  String name,
-                                                                 String newAlertThreshold);
+                                                                 Integer newAlertThreshold);
 
 
     /**
