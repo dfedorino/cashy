@@ -14,4 +14,8 @@ public class UserEntity {
     private String login;
     private String passwordHash;
     private LocalDateTime createdAt;
+
+    public UserEntity(String login, String passwordHash) {
+        this(null, login, passwordHash, null);
+    }
 }
