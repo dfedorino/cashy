@@ -47,6 +47,7 @@ public class JdbcAccountBalanceRepository implements AccountBalanceRepository {
 
         accountBalance.setId(KeyHolderUtil.getId(keyHolder));
         accountBalance.setCreatedAt(KeyHolderUtil.getCreatedAt(keyHolder));
+        accountBalance.setUpdatedAt(KeyHolderUtil.getUpdatedAt(keyHolder));
         return accountBalance;
     }
 
@@ -63,7 +64,6 @@ public class JdbcAccountBalanceRepository implements AccountBalanceRepository {
                 return Optional.empty();
             }
 
-            // Fetch the updated entity
             return findByUserId(userId);
         } catch (Exception e) {
             log.error(">> Failed to update account balance for userId: {}, newBalance: {}", userId,

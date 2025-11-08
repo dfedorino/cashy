@@ -1,8 +1,6 @@
 package com.dfedorino.cashy.jdbc.repository;
 
-import com.dfedorino.cashy.config.AppConfig;
 import com.dfedorino.cashy.jdbc.config.JdbcConfig;
-import com.dfedorino.cashy.jdbc.connection.HikariConfiguration;
 import com.dfedorino.cashy.jdbc.util.DataUtil;
 import com.dfedorino.cashy.util.PropertiesUtil;
 import java.io.IOException;
@@ -45,10 +43,6 @@ public class AbstractJdbcRepositoryTestSkeleton {
                 throw new RuntimeException(e);
             }
         }));
-    }
-
-    protected void tx(Runnable workload) {
-        tx.executeWithoutResult($ -> workload.run());
     }
 
 }
