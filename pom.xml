@@ -109,6 +109,11 @@
             <groupId>org.springframework</groupId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>6.4.4</version>
+        </dependency>
+        <dependency>
             <artifactId>HikariCP</artifactId>
             <groupId>com.zaxxer</groupId>
             <version>5.1.0</version>
