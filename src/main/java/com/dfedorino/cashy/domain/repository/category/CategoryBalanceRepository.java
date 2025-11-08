@@ -22,30 +22,34 @@ public interface CategoryBalanceRepository {
     CategoryBalanceEntity create(CategoryBalanceEntity categoryBalance);
 
     /**
-     * Updates the remaining balance of a category for a specific user.
+     * Updates the current balance of a category for a specific user.
      *
      * @param userId     the ID of the user who owns the category
      * @param categoryId the ID of the category whose balance will be updated
-     * @param newBalance the new remaining balance to set
+     * @param newBalance the new current balance to set
+     * @return an {@link Optional} containing the updated {@link CategoryBalanceEntity} if the
+     * update was successful, or empty if no matching category balance was found
+     * @throws RepositoryException if any error occurs
+     */
+    Optional<CategoryBalanceEntity> updateCurrentBalanceByUserIdAndCategoryId(Long userId,
+                                                                              Long categoryId,
+                                                                              BigDecimal newBalance);
+
+    /**
+     * Updates the remaining balance (limit balance) of a category for a specific user.
+     * <p>
+     * Typically used only for expense categories that have a spending limit.
+     *
+     * @param userId              the ID of the user who owns the category
+     * @param categoryId          the ID of the category whose remaining balance will be updated
+     * @param newRemainingBalance the new remaining balance to set
      * @return an {@link Optional} containing the updated {@link CategoryBalanceEntity} if the
      * update was successful, or empty if no matching category balance was found
      * @throws RepositoryException if any database error occurs
      */
-    Optional<CategoryBalanceEntity> updateBalanceByUserIdAndCategoryId(Long userId,
-                                                                       Long categoryId,
-                                                                       BigDecimal newBalance);
-
-
-    /**
-     * Finds a category balance by user ID and category ID.
-     *
-     * @param userId     the ID of the user
-     * @param categoryId the ID of the category
-     * @return an {@link Optional} containing the {@link CategoryBalanceEntity} if found, or empty
-     * if not found
-     * @throws RepositoryException if any error occurs
-     */
-    Optional<CategoryBalanceEntity> findByUserIdAndCategoryId(Long userId, Long categoryId);
+    Optional<CategoryBalanceEntity> updateRemainingBalanceByUserIdAndCategoryId(Long userId,
+                                                                                Long categoryId,
+                                                                                BigDecimal newRemainingBalance);
 
     /**
      * Retrieves all category balances for a specific user.
