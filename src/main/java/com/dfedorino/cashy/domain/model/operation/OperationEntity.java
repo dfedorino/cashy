@@ -13,8 +13,11 @@ public class OperationEntity {
 
     private Long id;
     private Long userId;
-    private Long kindId;
     private Long categoryId;
     private BigDecimal amount;
     private LocalDateTime createdAt;
+
+    public OperationEntity(Long userId, Long categoryId, BigDecimal amount) {
+        this(null, userId, categoryId, amount, null);
+    }
 }
