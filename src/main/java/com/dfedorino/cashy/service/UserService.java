@@ -1,12 +1,15 @@
 package com.dfedorino.cashy.service;
 
+import com.dfedorino.cashy.domain.model.account.AccountBalanceEntity;
 import com.dfedorino.cashy.domain.model.user.UserEntity;
+import com.dfedorino.cashy.domain.repository.account.AccountBalanceRepository;
 import com.dfedorino.cashy.domain.repository.user.UserRepository;
 import com.dfedorino.cashy.service.dto.UserDto;
 import com.dfedorino.cashy.service.exception.authorisation.PasswordIncorrectException;
 import com.dfedorino.cashy.service.exception.user.UserNotFoundException;
 import com.dfedorino.cashy.service.exception.user.UserNotLoggedInException;
 import com.dfedorino.cashy.util.AuthorisationUtil;
+import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,16 +21,23 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final AccountBalanceRepository accountBalanceRepository;
     private final TransactionTemplate tx;
 
-    public UserDto registerUser(String login, String password) {
-        UserDto user = new UserDto(safeTx($ -> userRepository.createUser(new UserEntity(
-                login,
-                AuthorisationUtil.getEncodedPassword(password)
-        ))).getLogin());
+    public void registerUser(String login, String password) {
+        UserDto user = new UserDto(safeTx($ -> {
+            UserEntity createdUser = userRepository.createUser(new UserEntity(
+                    login,
+                    AuthorisationUtil.getEncodedPassword(password)
+            ));
+            accountBalanceRepository.create(new AccountBalanceEntity(
+                    createdUser.getId(),
+                    BigDecimal.ZERO
+            ));
+            return createdUser;
+        }).getLogin());
 
         AuthorisationUtil.login(user);
-        return user;
     }
 
     public UserDto loginUser(String login, String password) {
