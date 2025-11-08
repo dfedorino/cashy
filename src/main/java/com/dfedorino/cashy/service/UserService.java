@@ -7,10 +7,10 @@ import com.dfedorino.cashy.domain.repository.user.UserRepository;
 import com.dfedorino.cashy.service.dto.UserDto;
 import com.dfedorino.cashy.service.exception.authorisation.PasswordIncorrectException;
 import com.dfedorino.cashy.service.exception.user.UserNotFoundException;
-import com.dfedorino.cashy.service.exception.user.UserNotLoggedInException;
 import com.dfedorino.cashy.util.AuthorisationUtil;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionCallback;
@@ -24,7 +24,7 @@ public class UserService {
     private final AccountBalanceRepository accountBalanceRepository;
     private final TransactionTemplate tx;
 
-    public void registerUser(String login, String password) {
+    public UserDto registerUser(String login, String password) {
         UserDto user = new UserDto(safeTx($ -> {
             UserEntity createdUser = userRepository.createUser(new UserEntity(
                     login,
@@ -38,6 +38,8 @@ public class UserService {
         }).getLogin());
 
         AuthorisationUtil.login(user);
+
+        return user;
     }
 
     public UserDto loginUser(String login, String password) {
@@ -53,16 +55,12 @@ public class UserService {
         return userDto;
     }
 
-    public void logout() {
-        if (AuthorisationUtil.isUserLoggedIn()) {
-            throw new UserNotLoggedInException();
-        }
-
-        AuthorisationUtil.logout();
+    public Optional<UserDto> findByLogin(String login) {
+        return safeTx($ -> userRepository.findByLogin(login)
+                .map(user -> new UserDto(user.getLogin())));
     }
 
     private <T> T safeTx(TransactionCallback<T> callback) {
         return Objects.requireNonNull(tx.execute(callback));
     }
-
 }

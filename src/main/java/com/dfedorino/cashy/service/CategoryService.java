@@ -14,6 +14,7 @@ import com.dfedorino.cashy.util.AuthorisationUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,41 @@ public class CategoryService {
                             user.getId(),
                             createdCategory.getId(),
                             initialBalance
+                    ));
+
+            return new CategoryDto(
+                    userLogin,
+                    createdCategory.getName(),
+                    TransactionTypes.of(createdCategory.getTransactionTypeId()),
+                    createdCategory.getLimitAmount(),
+                    createdCategory.getAlertThreshold(),
+                    categoryBalance.getCurrentBalance(),
+                    categoryBalance.getRemainingBalance()
+            );
+
+        });
+    }
+
+    public CategoryDto createExpenseCategory(String categoryName) {
+        if (!AuthorisationUtil.isUserLoggedIn()) {
+            throw new UserNotLoggedInException();
+        }
+        return safeTx($ -> {
+            String userLogin = AuthorisationUtil.getCurrentUser().login();
+            UserEntity user = userRepository.findByLogin(userLogin)
+                    .orElseThrow(() -> new UserNotFoundException(userLogin));
+
+            CategoryEntity createdCategory = categoryRepository.createCategory(new CategoryEntity(
+                    user.getId(),
+                    TransactionTypes.EXPENSE.getId(),
+                    categoryName
+            ));
+
+            CategoryBalanceEntity categoryBalance = categoryBalanceRepository.create(
+                    new CategoryBalanceEntity(
+                            user.getId(),
+                            createdCategory.getId(),
+                            BigDecimal.ZERO
                     ));
 
             return new CategoryDto(
@@ -106,6 +142,39 @@ public class CategoryService {
                     categoryBalance.getRemainingBalance()
             );
 
+        });
+    }
+
+    public Optional<CategoryDto> findByName(String categoryName) {
+        if (!AuthorisationUtil.isUserLoggedIn()) {
+            throw new UserNotLoggedInException();
+        }
+
+        return safeTx($ -> {
+            String userLogin = AuthorisationUtil.getCurrentUser().login();
+            UserEntity user = userRepository.findByLogin(userLogin)
+                    .orElseThrow(() -> new UserNotFoundException(userLogin));
+
+            return categoryRepository.findByUserIdAndName(
+                    user.getId(),
+                    categoryName
+            ).map(foundCategory -> {
+                CategoryBalanceEntity categoryBalance =
+                        categoryBalanceRepository.findByUserIdAndCategoryId(user.getId(),
+                                                                            foundCategory.getId())
+                                .orElseThrow(() -> new IllegalStateException(
+                                        "Category without balance!"));
+
+                return new CategoryDto(
+                        userLogin,
+                        foundCategory.getName(),
+                        TransactionTypes.of(foundCategory.getTransactionTypeId()),
+                        foundCategory.getLimitAmount(),
+                        foundCategory.getAlertThreshold(),
+                        categoryBalance.getCurrentBalance(),
+                        categoryBalance.getRemainingBalance()
+                );
+            });
         });
     }
 

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class OperationScenariosIT {
+public class OperationServiceIT {
 
     private AnnotationConfigApplicationContext ctx;
 
@@ -193,16 +193,18 @@ public class OperationScenariosIT {
                 .isEqualByComparingTo(new BigDecimal("56200"));
 
         // expense operation without category
-        var lastTaxiOperation = operationService.createExpenseOperation(new BigDecimal("1500"));
+        categoryService.createExpenseCategory("такси");
+        var lastTaxiOperation = operationService.createExpenseOperation(new BigDecimal("1500"),
+                                                                        "такси");
 
         assertThat(lastTaxiOperation.userLogin())
                 .isEqualTo(TestConstants.LOGIN);
         assertThat(lastTaxiOperation.categoryName())
-                .isNull();
+                .isEqualTo("такси");
         assertThat(lastTaxiOperation.operationAmount())
                 .isEqualByComparingTo(new BigDecimal("1500"));
         assertThat(lastTaxiOperation.categoryBalanceAfterOperation())
-                .isNull();
+                .isEqualByComparingTo(new BigDecimal("1500"));
         assertThat(lastTaxiOperation.categoryRemainingLimitAfterOperation())
                 .isNull();
         assertThat(lastTaxiOperation.totalBalanceAfterOperation())
