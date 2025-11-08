@@ -11,6 +11,7 @@ public class KeyHolderUtil {
 
     public static final String ID = "ID";
     public static final String CREATED_AT = "CREATED_AT";
+    public static final String UPDATED_AT = "UPDATED_AT";
 
 
     public Long getId(KeyHolder keyHolder) {
@@ -19,6 +20,11 @@ public class KeyHolderUtil {
 
     public LocalDateTime getCreatedAt(KeyHolder keyHolder) {
         return ((Timestamp) Objects.requireNonNull(keyHolder.getKeys()).get(CREATED_AT))
+                .toLocalDateTime();
+    }
+
+    public LocalDateTime getUpdatedAt(KeyHolder keyHolder) {
+        return ((Timestamp) Objects.requireNonNull(keyHolder.getKeys()).get(UPDATED_AT))
                 .toLocalDateTime();
     }
 }

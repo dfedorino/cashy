@@ -14,6 +14,7 @@ public class CategoryBalanceHistoryEntity {
     private Long id;
     private Long userId;
     private Long categoryId;
+    private BigDecimal currentBalance;
     private BigDecimal remainingBalance;
     private LocalDateTime createdAt;
 }
