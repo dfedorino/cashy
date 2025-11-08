@@ -44,7 +44,7 @@ public class UserService {
     }
 
     public void logout() {
-        if (AuthorisationUtil.getCurrentUser() == null) {
+        if (AuthorisationUtil.isUserLoggedIn()) {
             throw new UserNotLoggedInException();
         }
 

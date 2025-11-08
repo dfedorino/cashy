@@ -59,5 +59,15 @@ public interface CategoryBalanceRepository {
      * @throws RepositoryException if any error occurs
      */
     List<CategoryBalanceEntity> findByUserId(Long userId);
+
+    /**
+     * Retrieves a category balance for a specific user and given category id.
+     *
+     * @param userId the ID of the user
+     * @param categoryId the ID of the category
+     * @return an {@link Optional} of {@link CategoryBalanceEntity}
+     * @throws RepositoryException if any error occurs
+     */
+    Optional<CategoryBalanceEntity> findByUserIdAndCategoryId(Long userId, Long categoryId);
 }
 
