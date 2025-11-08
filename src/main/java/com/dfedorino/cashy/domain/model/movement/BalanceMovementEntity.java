@@ -12,10 +12,26 @@ import lombok.NoArgsConstructor;
 public class BalanceMovementEntity {
 
     private Long id;
+    private Long userId;
     private Long operationId;
     private Long accountBalanceId;
     private Long categoryBalanceId;
     private Long directionTypeId;
     private BigDecimal amount;
     private LocalDateTime createdAt;
+
+    public BalanceMovementEntity(Long userId,
+                                 Long operationId,
+                                 Long accountBalanceId,
+                                 Long categoryBalanceId,
+                                 Long directionTypeId,
+                                 BigDecimal amount
+    ) {
+        this.userId = userId;
+        this.operationId = operationId;
+        this.accountBalanceId = accountBalanceId;
+        this.categoryBalanceId = categoryBalanceId;
+        this.directionTypeId = directionTypeId;
+        this.amount = amount;
+    }
 }

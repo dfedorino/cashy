@@ -17,4 +17,10 @@ public class CategoryBalanceEntity {
     private BigDecimal remainingBalance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public CategoryBalanceEntity(Long userId, Long categoryId, BigDecimal remainingBalance) {
+        this.userId = userId;
+        this.categoryId = categoryId;
+        this.remainingBalance = remainingBalance;
+    }
 }

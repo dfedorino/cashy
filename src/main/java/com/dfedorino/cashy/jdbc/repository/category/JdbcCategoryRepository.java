@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public class JdbcCategoryRepository implements CategoryRepository {
 
     public static final String USER_ID = "userId";
-    public static final String KIND_ID = "kindId";
+    public static final String TRANSACTION_TYPE_ID = "transactionTypeId";
     public static final String NAME = "name";
     public static final String LIMIT_AMOUNT = "limitAmount";
     public static final String ALERT_THRESHOLD = "alertThreshold";
@@ -27,13 +27,13 @@ public class JdbcCategoryRepository implements CategoryRepository {
     private static final String INSERT_CATEGORY =
             "INSERT INTO category("
                     + "user_id, "
-                    + "kind_id, "
+                    + "transaction_type_id, "
                     + "name, "
                     + "limit_amount, "
                     + "alert_threshold) "
                     + "VALUES ("
                     + ":" + USER_ID + ", "
-                    + ":" + KIND_ID + ", "
+                    + ":" + TRANSACTION_TYPE_ID + ", "
                     + ":" + NAME + ", "
                     + ":" + LIMIT_AMOUNT + ", "
                     + ":" + ALERT_THRESHOLD + ")";
@@ -59,7 +59,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
         try {
             jdbcClient.sql(INSERT_CATEGORY)
                     .param(USER_ID, category.getUserId())
-                    .param(KIND_ID, category.getKindId())
+                    .param(TRANSACTION_TYPE_ID, category.getTransactionTypeId())
                     .param(NAME, category.getName())
                     .param(LIMIT_AMOUNT, category.getLimitAmount())
                     .param(ALERT_THRESHOLD, category.getAlertThreshold())

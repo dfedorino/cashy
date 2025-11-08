@@ -16,4 +16,9 @@ public class AccountBalanceEntity {
     private BigDecimal balance;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public AccountBalanceEntity(Long userId, BigDecimal balance) {
+        this.userId = userId;
+        this.balance = balance;
+    }
 }

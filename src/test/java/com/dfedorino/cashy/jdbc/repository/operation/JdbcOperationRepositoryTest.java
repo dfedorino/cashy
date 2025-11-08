@@ -3,7 +3,7 @@ package com.dfedorino.cashy.jdbc.repository.operation;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.dfedorino.cashy.TestConstants;
 import com.dfedorino.cashy.domain.model.category.CategoryEntity;
-import com.dfedorino.cashy.domain.model.kind.TransactionTypes;
+import com.dfedorino.cashy.domain.model.transaction.TransactionTypes;
 import com.dfedorino.cashy.domain.model.operation.OperationEntity;
 import com.dfedorino.cashy.domain.model.user.UserEntity;
 import com.dfedorino.cashy.domain.repository.category.CategoryRepository;
