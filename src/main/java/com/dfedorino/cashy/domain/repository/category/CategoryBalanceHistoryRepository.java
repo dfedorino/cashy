@@ -2,8 +2,8 @@ package com.dfedorino.cashy.domain.repository.category;
 
 import com.dfedorino.cashy.domain.model.category.CategoryBalanceHistoryEntity;
 import com.dfedorino.cashy.domain.repository.exception.RepositoryException;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository interface for managing {@link CategoryBalanceHistoryEntity} persistence. History
@@ -21,29 +21,14 @@ public interface CategoryBalanceHistoryRepository {
     CategoryBalanceHistoryEntity createHistoryEntry(CategoryBalanceHistoryEntity history);
 
     /**
-     * Retrieves all historical category balance records for a specific user and category.
+     * Retrieves all historical category balance records for a specific user and categories.
      *
-     * @param userId     the ID of the user
-     * @param categoryId the ID of the category
+     * @param userId      the ID of the user
+     * @param categoryIds the IDs of the categories
      * @return a list of {@link CategoryBalanceHistoryEntity} ordered by creation time ascending
      * @throws RepositoryException if any error occurs
      */
-    List<CategoryBalanceHistoryEntity> findByUserIdAndCategoryId(Long userId, Long categoryId);
-
-    /**
-     * Retrieves historical category balance records for a specific user and category within a time
-     * range.
-     *
-     * @param userId     the ID of the user
-     * @param categoryId the ID of the category
-     * @param from       start of the time range (inclusive)
-     * @param to         end of the time range (inclusive)
-     * @return a list of {@link CategoryBalanceHistoryEntity} ordered by creation time ascending
-     * @throws RepositoryException if any error occurs
-     */
-    List<CategoryBalanceHistoryEntity> findByUserIdAndCategoryIdBetween(Long userId,
-                                                                        Long categoryId,
-                                                                        LocalDateTime from,
-                                                                        LocalDateTime to);
+    List<CategoryBalanceHistoryEntity> findByUserIdAndCategoryIds(Long userId,
+                                                                  Set<Long> categoryIds);
 }
 
