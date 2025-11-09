@@ -28,16 +28,17 @@ public final class CreateCategory implements Command<CategoryDto> {
 
     @Override
     public ResultWithNotification<CategoryDto> apply(String... commandAndArgs) {
-        String category = commandAndArgs[1];
-        String limit = commandAndArgs[2];
-        String alertThreshold = commandAndArgs[4];
         var firstFailedCheck = validateInOrder(List.of(
                 () -> validateArguments(args -> args.length == 5 &&
                                                 Objects.equals(args[0], KEY_TOKEN),
                                         commandAndArgs),
-                () -> validateAmount(limit),
-                () -> validateAlertThreshold(alertThreshold)
+                () -> validateAmount(commandAndArgs[2]),
+                () -> validateAlertThreshold(commandAndArgs[4])
         ));
+
+        String category = commandAndArgs[1];
+        String limit = commandAndArgs[2];
+        String alertThreshold = commandAndArgs[4];
 
         if (firstFailedCheck.isPresent()) {
             return firstFailedCheck.get();
