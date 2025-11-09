@@ -66,9 +66,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
                     .param(ALERT_THRESHOLD, category.getAlertThreshold())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create category for userId: {}, name: {}", category.getUserId(),
-                      category.getName());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -94,9 +91,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
             return findByUserIdAndName(userId, newName);
 
         } catch (Exception e) {
-            log.error(">> Failed to update category name for userId: {}, oldName: {}, newName: {}",
-                      userId, oldName, newName);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -119,10 +113,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
             return findByUserIdAndName(userId, name);
 
         } catch (Exception e) {
-            log.error(
-                    ">> Failed to update limit amount for userId: {}, category name: {}, newLimitAmount: {}",
-                    userId, name, newLimitAmount);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -144,10 +134,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
             return findByUserIdAndName(userId, name);
 
         } catch (Exception e) {
-            log.error(
-                    ">> Failed to update alert threshold for userId: {}, category name: {}, newAlertThreshold: {}",
-                    userId, name, newAlertThreshold);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -160,8 +146,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
                     .query(CategoryEntity.class)
                     .list();
         } catch (Exception e) {
-            log.error(">> Failed to fetch categories for userId: {}", userId);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -175,9 +159,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
                     .query(CategoryEntity.class)
                     .optional();
         } catch (Exception e) {
-            log.error(">> Failed to fetch category for userId: {}, category name: {}",
-                      userId, categoryName);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }

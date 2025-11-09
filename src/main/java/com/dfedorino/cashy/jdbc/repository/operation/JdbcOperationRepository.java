@@ -36,11 +36,6 @@ public class JdbcOperationRepository implements OperationRepository {
                     .param(AMOUNT, operation.getAmount())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create operation for userId: {}, categoryId: {}, amount: {}",
-                      operation.getUserId(),
-                      operation.getCategoryId(),
-                      operation.getAmount());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 

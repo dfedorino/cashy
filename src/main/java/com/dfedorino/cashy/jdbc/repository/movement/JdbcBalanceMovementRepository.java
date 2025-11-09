@@ -54,13 +54,6 @@ public class JdbcBalanceMovementRepository implements BalanceMovementRepository 
                     .param(AMOUNT, movement.getAmount())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(
-                    ">> Failed to create balance movement for operationId: {}, accountBalanceId: {}, categoryBalanceId: {}, amount: {}",
-                    movement.getOperationId(),
-                    movement.getAccountBalanceId(),
-                    movement.getCategoryBalanceId(),
-                    movement.getAmount());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 

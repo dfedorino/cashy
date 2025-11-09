@@ -50,9 +50,6 @@ public class JdbcCategoryBalanceHistoryRepository implements CategoryBalanceHist
                     .param(REMAINING_BALANCE, history.getRemainingBalance())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create category balance history for userId: {}, categoryId: {}",
-                      history.getUserId(), history.getCategoryId());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -71,9 +68,6 @@ public class JdbcCategoryBalanceHistoryRepository implements CategoryBalanceHist
                     .query(CategoryBalanceHistoryEntity.class)
                     .list();
         } catch (Exception e) {
-            log.error(">> Failed to fetch category balance history for userId: {}, categoryIds: {}",
-                      userId, categoryIds);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }

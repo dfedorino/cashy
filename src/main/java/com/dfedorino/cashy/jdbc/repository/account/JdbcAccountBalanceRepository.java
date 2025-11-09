@@ -39,9 +39,6 @@ public class JdbcAccountBalanceRepository implements AccountBalanceRepository {
                     .param(BALANCE, accountBalance.getBalance())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create account balance for userId: {}",
-                      accountBalance.getUserId());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -66,9 +63,6 @@ public class JdbcAccountBalanceRepository implements AccountBalanceRepository {
 
             return findByUserId(userId);
         } catch (Exception e) {
-            log.error(">> Failed to update account balance for userId: {}, newBalance: {}", userId,
-                      newBalance);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -81,8 +75,6 @@ public class JdbcAccountBalanceRepository implements AccountBalanceRepository {
                     .query(AccountBalanceEntity.class)
                     .optional();
         } catch (Exception e) {
-            log.error(">> Failed to find account balance for userId: {}", userId);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
