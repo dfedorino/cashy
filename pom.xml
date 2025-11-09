@@ -192,7 +192,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <mockito.version>5.14.2</mockito.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Sonar -->
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -204,15 +203,14 @@
         <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
         <sonar.organization>dfedorino</sonar.organization>
         <sonar.coverage.exclusions>
-            **/Cli.java,
+            **/CommandLineInterface.java,
             **/ConsoleUtils.java,
+            **/FileUtils.java,
             **/CashyApp.java
         </sonar.coverage.exclusions>
-        <!-- Reports -->
         <sonar.projectKey>dfedorino_cashy</sonar.projectKey>
         <sonar.projectName>${project.name}</sonar.projectName>
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
-        <!-- Sonar Cloud -->
         <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
         <sonar.sources>${project.build.sourceDirectory}</sonar.sources>
         <sonar.tests>${project.build.testSourceDirectory}</sonar.tests>

@@ -75,8 +75,11 @@ public final class Withdraw implements Command<OperationDto> {
     }
 
     private String buildNotification(OperationDto actualResult) {
-        var message = new StringBuilder(SUCCESS_MESSAGE);
+        if (actualResult.categoryLimit() == null) {
+            return SUCCESS_MESSAGE;
+        }
 
+        var message = new StringBuilder(SUCCESS_MESSAGE);
         if (actualResult.categoryRemainingLimitAfterOperation().compareTo(BigDecimal.ZERO) == 0) {
             message.append(System.lineSeparator()).append(CATEGORY_LIMIT_REACHED);
         } else if (actualResult.categoryRemainingLimitAfterOperation().compareTo(BigDecimal.ZERO) < 0) {

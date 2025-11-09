@@ -3,7 +3,6 @@ package com.dfedorino.cashy;
 import com.dfedorino.cashy.config.AppConfig;
 import com.dfedorino.cashy.jdbc.util.DataUtil;
 import com.dfedorino.cashy.ui.cli.CommandLineInterface;
-import com.dfedorino.cashy.ui.cli.command.Command;
 import com.dfedorino.cashy.util.PropertiesUtil;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
