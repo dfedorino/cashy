@@ -222,7 +222,7 @@
             **/CashyApp.java
         </sonar.coverage.exclusions>
         <sonar.projectKey>dfedorino_cashy</sonar.projectKey>
-        <sonar.projectName>${project.name}</sonar.projectName>
+        <sonar.projectName>${project.artifactId}</sonar.projectName>
         <sonar.projectVersion>${project.version}</sonar.projectVersion>
         <sonar.sourceEncoding>${project.build.sourceEncoding}</sonar.sourceEncoding>
         <sonar.sources>${project.build.sourceDirectory}</sonar.sources>
