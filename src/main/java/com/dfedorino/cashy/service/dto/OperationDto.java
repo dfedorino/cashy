@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 public record OperationDto(
         String userLogin,
         String categoryName,
+        BigDecimal categoryLimit,
+        Integer categoryAlertThreshold,
         BigDecimal operationAmount,
         BigDecimal categoryBalanceAfterOperation,
         BigDecimal categoryRemainingLimitAfterOperation,

@@ -5,6 +5,7 @@ import com.dfedorino.cashy.scenario.dto.ScenarioResult;
 import com.dfedorino.cashy.service.dto.OperationDto;
 import com.dfedorino.cashy.ui.cli.command.Command;
 import com.dfedorino.cashy.ui.cli.command.dto.ResultWithNotification;
+import com.dfedorino.cashy.ui.cli.command.util.CategoryBudgetUtils;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +23,9 @@ public final class Withdraw implements Command<OperationDto> {
             KEY_TOKEN + " groceries 5000";
     public static final String SUCCESS_MESSAGE = "Withdrawal operation performed successfully!";
     public static final String DESCRIPTION_MESSAGE = "Perform a withdrawal operation";
+    public static final String THRESHOLD_REACHED = "Warning! Spending threshold %s reached!";
+    public static final String CATEGORY_LIMIT_REACHED = "Warning! Category limit reached!";
+    public static final String CATEGORY_LIMIT_EXCEEDED = "Warning! Category limit exceeded!";
 
     private final ScenarioService scenarioService;
 
@@ -44,9 +48,15 @@ public final class Withdraw implements Command<OperationDto> {
                 scenarioService.withdraw(withdrawalCategory,
                                          new BigDecimal(withdrawalAmount));
 
-        return scenarioResult.isSuccess() ?
-                ResultWithNotification.ofPayload(SUCCESS_MESSAGE, scenarioResult.result()) :
-                ResultWithNotification.ofErrorMessage(scenarioResult.failureReason().getMessage());
+        if (!scenarioResult.isSuccess()) {
+            return ResultWithNotification.ofErrorMessage(
+                    scenarioResult.failureReason().getMessage());
+        }
+
+        OperationDto actualResult = scenarioResult.result();
+
+        return ResultWithNotification.ofPayload(buildNotification(actualResult),
+                                                actualResult);
     }
 
     @Override
@@ -62,5 +72,21 @@ public final class Withdraw implements Command<OperationDto> {
     @Override
     public String example() {
         return EXAMPLE_MESSAGE;
+    }
+
+    private String buildNotification(OperationDto actualResult) {
+        var message = new StringBuilder(SUCCESS_MESSAGE);
+
+        if (actualResult.categoryRemainingLimitAfterOperation().compareTo(BigDecimal.ZERO) == 0) {
+            message.append(System.lineSeparator()).append(CATEGORY_LIMIT_REACHED);
+        } else if (actualResult.categoryRemainingLimitAfterOperation().compareTo(BigDecimal.ZERO) < 0) {
+            message.append(System.lineSeparator()).append(CATEGORY_LIMIT_EXCEEDED);
+        } else if (CategoryBudgetUtils.isThresholdReached(actualResult.categoryLimit(),
+                                                          actualResult.categoryRemainingLimitAfterOperation(),
+                                                          actualResult.categoryAlertThreshold())) {
+            message.append(System.lineSeparator())
+                    .append(THRESHOLD_REACHED.formatted(actualResult.categoryAlertThreshold()));
+        }
+        return message.toString();
     }
 }
