@@ -170,11 +170,35 @@ public class CategoryService {
             String userLogin = AuthorisationUtil.getCurrentUser().login();
             UserEntity user = userRepository.findByLogin(userLogin)
                     .orElseThrow(() -> new UserNotFoundException(userLogin));
+            // calculate delta
+            CategoryEntity category = categoryRepository.findByUserIdAndName(user.getId(),
+                                                                             categoryName)
+                    .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+
+            BigDecimal currentLimit = category.getLimitAmount();
+            BigDecimal limitDelta = currentLimit.subtract(newLimit);
+            categoryRepository.updateLimitAmountByUserIdAndName(user.getId(),
+                                                                categoryName,
+                                                                newLimit);
+
+            CategoryBalanceEntity categoryBalance =
+                    categoryBalanceRepository.findByUserIdAndCategoryId(user.getId(),
+                                                                        category.getId())
+                            .orElseThrow(
+                                    () -> new IllegalStateException("Category without balance!"));
+
+            BigDecimal currentRemainingBalance = categoryBalance.getRemainingBalance();
+            categoryBalanceRepository
+                    .updateRemainingBalanceByUserIdAndCategoryId(user.getId(),
+                                                                 category.getId(),
+                                                                 currentRemainingBalance.subtract(
+                                                                         limitDelta));
+
             return categoryRepository.updateLimitAmountByUserIdAndName(user.getId(),
                                                                        categoryName,
                                                                        newLimit)
-                    .map(category -> getCategoryBalanceAndBuildDto(category, user))
-                    .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+                    .map(c -> getCategoryBalanceAndBuildDto(c, user))
+                    .orElseThrow();
         });
     }
 
