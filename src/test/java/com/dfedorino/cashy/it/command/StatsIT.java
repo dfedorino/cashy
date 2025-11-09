@@ -12,9 +12,13 @@ import com.dfedorino.cashy.ui.cli.command.impl.Income;
 import com.dfedorino.cashy.ui.cli.command.impl.Login;
 import com.dfedorino.cashy.ui.cli.command.impl.Stats;
 import com.dfedorino.cashy.ui.cli.command.impl.Withdraw;
+import com.dfedorino.cashy.ui.cli.command.util.FileUtils;
 import com.dfedorino.cashy.util.PropertiesUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
@@ -187,6 +191,42 @@ public class StatsIT {
 
         assertThat(filteredStatsResult.notification()).isEqualTo(Stats.FAILED_TO_FIND_CATEGORIES + "[entertainment]");
         assertThat(filteredStatsResult.result()).isEmpty();
+    }
+
+    @Test
+    void export_filtered_stats() throws IOException {
+        login.apply(Login.KEY_TOKEN, TestConstants.LOGIN,
+                    Login.PASSWORD_TOKEN, TestConstants.PASSWORD);
+
+        income.apply(Income.KEY_TOKEN, TestConstants.INCOME_CATEGORY, "100");
+
+        createCategory.apply(
+                CreateCategory.KEY_TOKEN,
+                TestConstants.EXPENSE_CATEGORY,
+                TestConstants.LIMIT_AMOUNT.toPlainString(),
+                CreateCategory.ALERT_TOKEN,
+                TestConstants.ALERT_THRESHOLD + ""
+        );
+
+        withdraw.apply(Withdraw.KEY_TOKEN, TestConstants.EXPENSE_CATEGORY, "50");
+        withdraw.apply(Withdraw.KEY_TOKEN, "taxi", "50");
+
+        ResultWithNotification<StatsDto> filteredStatsResult = stats.apply(Stats.KEY_TOKEN,
+                                                                           Stats.CATEGORIES_TOKEN,
+                                                                           TestConstants.EXPENSE_CATEGORY,
+                                                                           Stats.EXPORT_TOKEN);
+
+        assertThat(filteredStatsResult.notification()).isEqualTo(Stats.SUCCESS_MESSAGE);
+        assertThat(filteredStatsResult.result()).isPresent();
+
+        StatsDto actualFilteredStats = filteredStatsResult.result().get();
+        log.info(">> stats: {}", actualFilteredStats);
+
+        Optional<StatsDto> imported = FileUtils.importFromJson("stats", StatsDto.class);
+
+        assertThat(imported).contains(actualFilteredStats);
+
+        Files.delete(Paths.get("stats.json"));
     }
 
     private void initContextWithProperties(String path) throws IOException {
