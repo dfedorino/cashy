@@ -59,8 +59,7 @@ public class ScenarioServiceIT {
         scenarioService.topUp("Бонус", new BigDecimal("3000"));
 
         assertThat(scenarioService.stats().isSuccess()).isTrue();
-        assertThat(scenarioService.stats().result()).isPresent();
-        StatsDto actualStats = scenarioService.stats().result().get();
+        StatsDto actualStats = scenarioService.stats().result();
 
         assertThat(actualStats.totalIncomeAmount())
                 .isEqualByComparingTo(new BigDecimal("63000.00"));

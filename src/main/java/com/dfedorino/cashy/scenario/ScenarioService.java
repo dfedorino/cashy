@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -81,6 +82,38 @@ public class ScenarioService {
                     totalIncomeAmount = totalIncomeAmount.add(category.currentBalance());
                     incomeCategories.add(shortCategory);
                 } else {
+                    totalExpenseAmount = totalExpenseAmount.add(category.currentBalance());
+                    expenseCategories.add(shortCategory);
+                }
+            }
+
+            return new StatsDto(totalIncomeAmount,
+                                incomeCategories,
+                                totalExpenseAmount,
+                                expenseCategories);
+        });
+    }
+
+    public ScenarioResult<StatsDto> stats(Set<String> expenseCategoriesFilter) {
+        return executeScenario(() -> {
+            List<CategoryDto> categories = categoryService.findAllCategories();
+
+            BigDecimal totalIncomeAmount = BigDecimal.ZERO;
+            List<ShortCategoryDto> incomeCategories = new ArrayList<>();
+            BigDecimal totalExpenseAmount = BigDecimal.ZERO;
+            List<ShortCategoryDto> expenseCategories = new ArrayList<>();
+
+            for (CategoryDto category : categories) {
+                ShortCategoryDto shortCategory = new ShortCategoryDto(
+                        category.categoryName(),
+                        category.currentBalance(),
+                        category.limit(),
+                        category.remainingBalance()
+                );
+                if (category.transactionType() == TransactionTypes.INCOME) {
+                    totalIncomeAmount = totalIncomeAmount.add(category.currentBalance());
+                    incomeCategories.add(shortCategory);
+                } else if (expenseCategoriesFilter.contains(category.categoryName())) {
                     totalExpenseAmount = totalExpenseAmount.add(category.currentBalance());
                     expenseCategories.add(shortCategory);
                 }
