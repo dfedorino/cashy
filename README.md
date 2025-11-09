@@ -4,19 +4,31 @@
 * [Автоматизация](#автоматизация)
 * [Контроль качества](#контроль-качества)
 * [Запуск](#запуск)
-  * [Средний уровень сложности](#средний-уровень-сложности)
-  * [Высокий уровень сложности](#высокий-уровень-сложности)
-<!-- TOC -->ino_cashy&metric=coverage)](https://sonarcloud.io/summary/new_code?id=dfedorino_cashy)
+* [Примеры команд](#примеры-команд)
+<!-- TOC -->
+
+# Описание
+Backend-приложение для управления личными финансами.
+
+# Архитектура
+В проекте поддержана слоистая архитектура:
+![architecture.png](images/architecture.png)
+
+# Автоматизация
+Настроены проверки билда при создании пулл-реквеста в main:
+[build.yaml](.github/workflows/build.yaml)
+
+# Контроль качества
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dfedorino_cashy&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=dfedorino_cashy)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dfedorino_cashy&metric=coverage)](https://sonarcloud.io/summary/new_code?id=dfedorino_cashy)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=dfedorino_cashy&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=dfedorino_cashy)
 
 # Запуск
 Необходимо для запуска:
 * Java 21
-
-# Примеры команд
-Скачать jar файл:
-[cashy-1.0.0.jar](https://github.com/dfedorino/cashy/releases/download/v1.0.0/cashy-1.0.0.jar)
-Запустить в терминале в директории, в которую скачан jar:
+  Скачать jar файл:
+  [cashy-1.0.0.jar](https://github.com/dfedorino/cashy/releases/download/v1.0.0/cashy-1.0.0.jar)
+  Запустить в терминале в директории, в которую скачан jar:
 ```
 java -jar cashy-1.0.0.jar
 ```
@@ -34,6 +46,8 @@ category_edit food -l 5000'
 * stats : Fetch budget statistics, example: 'stats -c groceries taxi'
 * withdraw : Perform a withdrawal operation, example: 'withdraw groceries 5000'
 ```
+
+# Примеры команд
 Авторизация пользователей
 ```
 >> login test -p test
