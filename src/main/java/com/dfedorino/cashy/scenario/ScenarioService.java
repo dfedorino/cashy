@@ -50,6 +50,18 @@ public class ScenarioService {
                                                                            alertThreshold));
     }
 
+    public ScenarioResult<CategoryDto> editBudget(String categoryName,
+                                                  String newCategoryName) {
+        return executeScenario(() -> categoryService.editCategoryName(categoryName,
+                                                                      newCategoryName));
+    }
+
+    public ScenarioResult<CategoryDto> editBudget(String categoryName,
+                                                  BigDecimal newLimit) {
+        return executeScenario(() -> categoryService.editCategoryLimit(categoryName,
+                                                                       newLimit));
+    }
+
     public ScenarioResult<OperationDto> withdraw(String categoryName, BigDecimal amount) {
         return executeScenario(() -> {
             Optional<CategoryDto> category = categoryService.findByName(categoryName);

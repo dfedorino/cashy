@@ -8,6 +8,7 @@ import com.dfedorino.cashy.domain.repository.category.CategoryBalanceRepository;
 import com.dfedorino.cashy.domain.repository.category.CategoryRepository;
 import com.dfedorino.cashy.domain.repository.user.UserRepository;
 import com.dfedorino.cashy.service.dto.CategoryDto;
+import com.dfedorino.cashy.service.exception.category.CategoryNotFoundException;
 import com.dfedorino.cashy.service.exception.user.UserNotFoundException;
 import com.dfedorino.cashy.service.exception.user.UserNotLoggedInException;
 import com.dfedorino.cashy.util.AuthorisationUtil;
@@ -145,6 +146,38 @@ public class CategoryService {
         });
     }
 
+    public CategoryDto editCategoryName(String categoryName, String newCategoryName) {
+        if (!AuthorisationUtil.isUserLoggedIn()) {
+            throw new UserNotLoggedInException();
+        }
+        return safeTx($ -> {
+            String userLogin = AuthorisationUtil.getCurrentUser().login();
+            UserEntity user = userRepository.findByLogin(userLogin)
+                    .orElseThrow(() -> new UserNotFoundException(userLogin));
+            return categoryRepository.updateNameByUserIdAndName(user.getId(),
+                                                                categoryName,
+                                                                newCategoryName)
+                    .map(category -> getCategoryBalanceAndBuildDto(category, user))
+                    .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+        });
+    }
+
+    public CategoryDto editCategoryLimit(String categoryName, BigDecimal newLimit) {
+        if (!AuthorisationUtil.isUserLoggedIn()) {
+            throw new UserNotLoggedInException();
+        }
+        return safeTx($ -> {
+            String userLogin = AuthorisationUtil.getCurrentUser().login();
+            UserEntity user = userRepository.findByLogin(userLogin)
+                    .orElseThrow(() -> new UserNotFoundException(userLogin));
+            return categoryRepository.updateLimitAmountByUserIdAndName(user.getId(),
+                                                                       categoryName,
+                                                                       newLimit)
+                    .map(category -> getCategoryBalanceAndBuildDto(category, user))
+                    .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+        });
+    }
+
     public Optional<CategoryDto> findByName(String categoryName) {
         if (!AuthorisationUtil.isUserLoggedIn()) {
             throw new UserNotLoggedInException();
@@ -188,23 +221,25 @@ public class CategoryService {
                 .orElseThrow(() -> new UserNotFoundException(userLogin));
 
         return safeTx($ -> categoryRepository.findByUserId(user.getId()).stream()
-                .map(category -> {
-                    var categoryBalance =
-                            categoryBalanceRepository.findByUserIdAndCategoryId(user.getId(),
-                                                                                category.getId())
-                                    .orElseThrow(() -> new IllegalStateException(
-                                            "Category without balance"));
-                    return new CategoryDto(
-                            user.getLogin(),
-                            category.getName(),
-                            TransactionTypes.of(category.getTransactionTypeId()),
-                            category.getLimitAmount(),
-                            category.getAlertThreshold(),
-                            categoryBalance.getCurrentBalance(),
-                            categoryBalance.getRemainingBalance()
-                    );
-                })
+                .map(category -> getCategoryBalanceAndBuildDto(category, user))
                 .toList());
+    }
+
+    private CategoryDto getCategoryBalanceAndBuildDto(CategoryEntity category, UserEntity user) {
+        var categoryBalance =
+                categoryBalanceRepository.findByUserIdAndCategoryId(user.getId(),
+                                                                    category.getId())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Category without balance"));
+        return new CategoryDto(
+                user.getLogin(),
+                category.getName(),
+                TransactionTypes.of(category.getTransactionTypeId()),
+                category.getLimitAmount(),
+                category.getAlertThreshold(),
+                categoryBalance.getCurrentBalance(),
+                categoryBalance.getRemainingBalance()
+        );
     }
 
     private <T> T safeTx(TransactionCallback<T> callback) {
