@@ -1,5 +1,6 @@
 package com.dfedorino.cashy.ui.cli;
 
+import com.dfedorino.cashy.scenario.dto.StatsDto;
 import com.dfedorino.cashy.ui.cli.command.Command;
 import com.dfedorino.cashy.ui.cli.command.dto.ResultWithNotification;
 import com.dfedorino.cashy.ui.cli.command.impl.Quit;
@@ -42,7 +43,9 @@ public class CommandLineInterface {
                 ResultWithNotification<?> resultWithNotification = keyToCommand.get(command).apply(tokens);
                 log.info(resultWithNotification.notification());
                 resultWithNotification.result().ifPresent(value -> {
-                    // TODO: handle results
+                    if (value instanceof StatsDto stats) {
+                        ConsoleUtils.render(stats);
+                    }
                 });
             }
         }

@@ -54,9 +54,6 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                     .param(REMAINING_BALANCE, categoryBalance.getRemainingBalance())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create category balance for userId: {}, categoryId: {}",
-                      categoryBalance.getUserId(), categoryBalance.getCategoryId());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -84,10 +81,6 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
             return findByUserIdAndCategoryId(userId, categoryId);
 
         } catch (Exception e) {
-            log.error(
-                    ">> Failed to update current balance for userId: {}, categoryId: {}, newBalance: {}",
-                    userId, categoryId, newBalance);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -110,10 +103,6 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
             return findByUserIdAndCategoryId(userId, categoryId);
 
         } catch (Exception e) {
-            log.error(
-                    ">> Failed to update remaining balance for userId: {}, categoryId: {}, newBalance: {}",
-                    userId, categoryId, newBalance);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -126,8 +115,6 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                     .query(CategoryBalanceEntity.class)
                     .list();
         } catch (Exception e) {
-            log.error(">> Failed to fetch category balances for userId: {}", userId);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
@@ -141,9 +128,6 @@ public class JdbcCategoryBalanceRepository implements CategoryBalanceRepository 
                     .query(CategoryBalanceEntity.class)
                     .optional();
         } catch (Exception e) {
-            log.error(">> Failed to fetch category balance for userId: {}, categoryId: {}",
-                      userId, categoryId);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }

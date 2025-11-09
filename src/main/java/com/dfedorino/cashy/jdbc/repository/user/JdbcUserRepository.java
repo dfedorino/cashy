@@ -38,8 +38,6 @@ public class JdbcUserRepository implements UserRepository {
                     .param(PASSWORD_HASH, user.getPasswordHash())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create user with login: {}", user.getLogin());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -57,8 +55,6 @@ public class JdbcUserRepository implements UserRepository {
                     .query(UserEntity.class)
                     .optional();
         } catch (Exception e) {
-            log.error(">> Failed to find user with login: {}", login);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }

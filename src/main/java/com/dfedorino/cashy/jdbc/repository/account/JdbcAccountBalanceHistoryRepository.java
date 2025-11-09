@@ -37,9 +37,6 @@ public class JdbcAccountBalanceHistoryRepository implements AccountBalanceHistor
                     .param(BALANCE, history.getBalance())
                     .update(keyHolder);
         } catch (Exception e) {
-            log.error(">> Failed to create account balance history for userId: {}",
-                      history.getUserId());
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
 
@@ -56,8 +53,6 @@ public class JdbcAccountBalanceHistoryRepository implements AccountBalanceHistor
                     .query(AccountBalanceHistoryEntity.class)
                     .list();
         } catch (Exception e) {
-            log.error(">> Failed to fetch account balance history for userId: {}", userId);
-            log.error(">> ", e);
             throw new RepositoryException(e);
         }
     }
