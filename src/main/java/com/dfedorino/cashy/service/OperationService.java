@@ -61,6 +61,8 @@ public class OperationService {
 
             return new OperationDto(userLogin,
                                     category.getName(),
+                                    null,
+                                    null,
                                     operation.getAmount(),
                                     updatedCategoryBalance.getCurrentBalance(),
                                     null,
@@ -95,6 +97,8 @@ public class OperationService {
             return new OperationDto(
                     userLogin,
                     category.getName(),
+                    category.getLimitAmount(),
+                    category.getAlertThreshold(),
                     operation.getAmount(),
                     updatedCategoryBalance.getCurrentBalance(),
                     updatedCategoryBalance.getRemainingBalance(),
